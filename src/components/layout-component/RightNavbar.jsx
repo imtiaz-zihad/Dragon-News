@@ -1,4 +1,6 @@
+import Advertisement from "../Advertisement";
 import FindUs from "../FindUs";
+import QZone from "../QZone";
 import SocialLogin from "../SocialLogin";
 
 const RightNavbar = () => {
@@ -6,6 +8,8 @@ const RightNavbar = () => {
         <div>
            <SocialLogin />
            <FindUs />
+           <QZone />
+           <Advertisement />
         </div>
     );
 };
