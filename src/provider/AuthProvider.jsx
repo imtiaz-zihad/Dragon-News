@@ -1,27 +1,39 @@
 import { createContext, useEffect, useState } from "react";
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+  updateProfile,
+} from "firebase/auth";
 import app from "../firebase/firebase.config";
 
 export const AuthContext = createContext();
-
+const auth = getAuth(app);
 // eslint-disable-next-line react/prop-types
 const AuthProvider = ({ children }) => {
-  const auth = getAuth(app);
-
   const [user, setUser] = useState(null);
+  const [loading,setLoading] =useState(true)
   console.log(user);
-  
 
-  const createNewUser = (email,password) =>{
-    return createUserWithEmailAndPassword(auth,email,password)
-  }
+  const createNewUser = (email, password) => {
+    setLoading(true)
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
 
-  const logOut = () =>{
-    return signOut(auth)
-  }
+  const logOut = () => {
+    setLoading(true)
+    return signOut(auth);
+  };
 
-  const userLogin =(email,password)=>{
-    return signInWithEmailAndPassword(auth, email, password)
+  const userLogin = (email, password) => {
+    setLoading(true)
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const updateUserProfile =(updatedData) =>{
+    return updateProfile(auth.currentUser, updatedData)
   }
 
   const authInfo = {
@@ -30,17 +42,20 @@ const AuthProvider = ({ children }) => {
     createNewUser,
     logOut,
     userLogin,
+    loading,
+    updateUserProfile
   };
 
-  useEffect(() =>{
-   const unSubscribe = onAuthStateChanged(auth , currentUser =>{
-        setUser(currentUser)
-    })
+  useEffect(() => {
+    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setLoading(false)
+    });
 
-    return () =>{
-        unSubscribe();
-    }
-  },[])
+    return () => {
+      unSubscribe();
+    };
+  }, []);
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
   );
